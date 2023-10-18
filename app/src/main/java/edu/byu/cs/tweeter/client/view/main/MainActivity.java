@@ -231,22 +231,4 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
     public void openMainView(User user) {
 
     }
-
-    // LogoutHandler
-
-
-    // GetFollowersCountHandler
-
-
-    // GetFollowingCountHandler
-
-
-    // IsFollowerHandler
-
-
-    // FollowHandler
-
-
-    // UnfollowHandler
-
 }
