@@ -144,15 +144,12 @@ public class FollowService {
             boolean success = msg.getData().getBoolean(GetFollowersCountTask.SUCCESS_KEY);
             if (success) {
                 int count = msg.getData().getInt(GetFollowersCountTask.COUNT_KEY);
-//                followerCount.setText(getString(R.string.followerCount, String.valueOf(count)));
                 observer.getFollowersCountSucceeded(count);
             } else if (msg.getData().containsKey(GetFollowersCountTask.MESSAGE_KEY)) {
                 String message = msg.getData().getString(GetFollowersCountTask.MESSAGE_KEY);
-//                Toast.makeText(MainActivity.this, "Failed to get followers count: " + message, Toast.LENGTH_LONG).show();
                 observer.getFollowersCountFailed("Failed to get followers count: " + message);
             } else if (msg.getData().containsKey(GetFollowersCountTask.EXCEPTION_KEY)) {
                 Exception ex = (Exception) msg.getData().getSerializable(GetFollowersCountTask.EXCEPTION_KEY);
-//                Toast.makeText(MainActivity.this, "Failed to get followers count because of exception: " + ex.getMessage(), Toast.LENGTH_LONG).show();
                 observer.getFollowersCountFailed("Failed to get followers count because of exception: " + ex.getMessage());
             }
         }
@@ -178,15 +175,12 @@ public class FollowService {
             boolean success = msg.getData().getBoolean(GetFollowingCountTask.SUCCESS_KEY);
             if (success) {
                 int count = msg.getData().getInt(GetFollowingCountTask.COUNT_KEY);
-//                followeeCount.setText(getString(R.string.followeeCount, String.valueOf(count)));
                 observer.getFollowingCountSucceeded(count);
             } else if (msg.getData().containsKey(GetFollowingCountTask.MESSAGE_KEY)) {
                 String message = msg.getData().getString(GetFollowingCountTask.MESSAGE_KEY);
-//                Toast.makeText(MainActivity.this, "Failed to get following count: " + message, Toast.LENGTH_LONG).show();
                 observer.getFollowingCountFailed("Failed to get following count: " + message);
             } else if (msg.getData().containsKey(GetFollowingCountTask.EXCEPTION_KEY)) {
                 Exception ex = (Exception) msg.getData().getSerializable(GetFollowingCountTask.EXCEPTION_KEY);
-//                Toast.makeText(MainActivity.this, "Failed to get following count because of exception: " + ex.getMessage(), Toast.LENGTH_LONG).show();
                 observer.getFollowingCountFailed("Failed to get following count because of exception: " + ex.getMessage());
             }
         }

@@ -1,17 +1,8 @@
 package edu.byu.cs.tweeter.client.presenter;
 
-import android.widget.Toast;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.services.FollowService;
 import edu.byu.cs.tweeter.client.model.services.PostService;
 import edu.byu.cs.tweeter.client.model.services.UserService;
-import edu.byu.cs.tweeter.client.model.services.backgroundTask.FollowTask;
-import edu.byu.cs.tweeter.client.model.services.backgroundTask.UnfollowTask;
-import edu.byu.cs.tweeter.client.view.main.MainActivity;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class MainPresenter implements FollowService.UnfollowObserver, FollowService.FollowObserver, FollowService.GetFollowersCountObserver, FollowService.GetFollowingCountObserver, FollowService.IsFollowerObserver, UserService.LogoutObserver, PostService.PostObserver {
@@ -19,44 +10,48 @@ public class MainPresenter implements FollowService.UnfollowObserver, FollowServ
     public void unfollowSucceeded() {
         this.updateSelectedUserFollowingAndFollowers();
         view.updateFollowButton(true);
-        view.followButtonSetEnabled(true);
+        view.followButtonSetEnabled();
     }
 
     @Override
     public void unfollowFailed(String message) {
         view.showErrorMessage(message);
-        view.followButtonSetEnabled(true);
-    }
-
-    @Override
-    public void getFollowersCountSucceeded(int count) {
-
-    }
-
-    @Override
-    public void getFollowersCountFailed(String message) {
-
-    }
-
-    @Override
-    public void getFollowingCountSucceeded(int count) {
-
-    }
-
-    @Override
-    public void getFollowingCountFailed(String message) {
-
+        view.followButtonSetEnabled();
     }
 
     @Override
     public void followSucceeded() {
-
+        this.updateSelectedUserFollowingAndFollowers();
+        view.updateFollowButton(false);
+        view.followButtonSetEnabled();
     }
 
     @Override
     public void followFailed(String message) {
-
+        view.showErrorMessage(message);
+        view.followButtonSetEnabled();
     }
+
+    @Override
+    public void getFollowersCountSucceeded(int count) {
+        view.setFollowerCount(count);
+    }
+
+    @Override
+    public void getFollowersCountFailed(String message) {
+        view.showErrorMessage(message);
+    }
+
+    @Override
+    public void getFollowingCountSucceeded(int count) {
+        view.setFollowingCount(count);
+    }
+
+    @Override
+    public void getFollowingCountFailed(String message) {
+        view.showErrorMessage(message);
+    }
+
 
     @Override
     public void isFollowerSucceeded(boolean isFollower) {
@@ -80,12 +75,12 @@ public class MainPresenter implements FollowService.UnfollowObserver, FollowServ
 
     @Override
     public void postSucceeded() {
-
+        view.showInfoMessage("Successfully Posted!");
     }
 
     @Override
     public void postFailed(String message) {
-
+        view.showErrorMessage(message);
     }
 
     public interface View {
@@ -96,9 +91,11 @@ public class MainPresenter implements FollowService.UnfollowObserver, FollowServ
 
         void openMainView(User user);
         void updateFollowButton(boolean removed);
-        void followButtonSetEnabled(boolean enabled);
+        void followButtonSetEnabled();
         void isFollower(boolean isFollower);
         void loginActivity();
+        void setFollowerCount(int count);
+        void setFollowingCount(int count);
     }
     private final View view;
     private final User selectedUser;

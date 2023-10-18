@@ -27,24 +27,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import edu.byu.cs.tweeter.R;
-import edu.byu.cs.tweeter.client.model.services.backgroundTask.FollowTask;
-import edu.byu.cs.tweeter.client.model.services.backgroundTask.GetFollowersCountTask;
-import edu.byu.cs.tweeter.client.model.services.backgroundTask.GetFollowingCountTask;
-import edu.byu.cs.tweeter.client.model.services.backgroundTask.IsFollowerTask;
-import edu.byu.cs.tweeter.client.model.services.backgroundTask.LogoutTask;
-import edu.byu.cs.tweeter.client.model.services.backgroundTask.PostStatusTask;
-import edu.byu.cs.tweeter.client.model.services.backgroundTask.UnfollowTask;
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.presenter.MainPresenter;
 import edu.byu.cs.tweeter.client.view.login.LoginActivity;
 import edu.byu.cs.tweeter.client.view.login.StatusDialogFragment;
-import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
 /**
@@ -93,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
             }
         });
 
-//        updateSelectedUserFollowingAndFollowers();
         presenter.updateSelectedUserFollowingAndFollowers();
 
         TextView userName = findViewById(R.id.userName);
@@ -117,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
             followButton.setVisibility(View.GONE);
         } else {
             followButton.setVisibility(View.VISIBLE);
-            presenter.isFollower();
+            presenter.isFollower(); // check this
         }
 
         followButton.setOnClickListener(new View.OnClickListener() {
@@ -167,16 +154,18 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
     }
 
     @Override
-    public void onStatusPosted(String post) {
-//
-        presenter.postStatus(post);
+    public void setFollowerCount(int count) {
+        followerCount.setText(getString(R.string.followerCount, String.valueOf(count)));
     }
 
-    public String getFormattedDateTime() throws ParseException {
-        SimpleDateFormat userFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        SimpleDateFormat statusFormat = new SimpleDateFormat("MMM d yyyy h:mm aaa");
+    @Override
+    public void setFollowingCount(int count) {
+        followeeCount.setText(getString(R.string.followeeCount, String.valueOf(count)));
+    }
 
-        return statusFormat.format(userFormat.parse(LocalDate.now().toString() + " " + LocalTime.now().toString().substring(0, 8)));
+    @Override
+    public void onStatusPosted(String post) {
+        presenter.postStatus(post);
     }
 
     public void updateFollowButton(boolean removed) {
@@ -191,8 +180,9 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
         }
     }
 
-    public void followButtonSetEnabled(boolean enabled) {
-        followButton.setEnabled(enabled);
+    @Override
+    public void followButtonSetEnabled() {
+        followButton.setEnabled(true);
     }
 
     @Override
@@ -213,12 +203,12 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
     }
 
     @Override
-    public void hideInfoMessage() {
-
+    public void showErrorMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void showErrorMessage(String message) {
+    public void hideInfoMessage() {
 
     }
 
