@@ -1,10 +1,5 @@
 package edu.byu.cs.tweeter.client.presenter;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.widget.ImageView;
-
-import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
 import edu.byu.cs.tweeter.client.model.services.RegisterService;

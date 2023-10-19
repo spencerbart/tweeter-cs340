@@ -46,7 +46,7 @@ import edu.byu.cs.tweeter.util.Timestamp;
 /**
  * Implements the "Story" tab.
  */
-public class StoryFragment extends Fragment implements StoryPresenter.View {
+public class StoryFragment extends Fragment implements StoryPresenter.StoryView {
     private static final String LOG_TAG = "StoryFragment";
     private static final String USER_KEY = "UserKey";
 
@@ -110,19 +110,19 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
     }
 
     @Override
-    public void openMainView(User user) {
+    public void openView(User user) {
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.putExtra(MainActivity.CURRENT_USER_KEY, user);
         startActivity(intent);
     }
 
     @Override
-    public void startingLoad() {
+    public void startLoadingBottom() {
         storyRecyclerViewAdapter.addLoadingFooter();
     }
 
     @Override
-    public void endingLoad() {
+    public void endLoadingBottom() {
         storyRecyclerViewAdapter.removeLoadingFooter();
     }
 
