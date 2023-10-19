@@ -1,10 +1,8 @@
 package edu.byu.cs.tweeter.client.model.services;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -13,7 +11,6 @@ import java.util.concurrent.Executors;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.services.backgroundTask.RegisterTask;
-import edu.byu.cs.tweeter.client.view.main.MainActivity;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -31,7 +28,7 @@ public class RegisterService {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(registerTask);
     }
-    private class RegisterHandler extends Handler {
+    private static class RegisterHandler extends Handler {
 
         private final RegisterObserver observer;
 

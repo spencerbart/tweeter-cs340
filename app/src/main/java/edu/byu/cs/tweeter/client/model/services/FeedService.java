@@ -1,57 +1,68 @@
 package edu.byu.cs.tweeter.client.model.services;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 
-import androidx.annotation.NonNull;
-
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import edu.byu.cs.tweeter.client.model.services.backgroundTask.BackgroundTaskUtils;
 import edu.byu.cs.tweeter.client.model.services.backgroundTask.GetFeedTask;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class FeedService {
-    public interface GetFeedObserver {
-        void getFeedSucceeded(List<Status> statuses, boolean hasMorePages, Status lastStatus);
-        void getFeedFailed(String message);
-    }
-    public void getFeed(AuthToken authToken, User user, int pageSize, Status lastStatus, GetFeedObserver observer) {
-        GetFeedTask getFeedTask = new GetFeedTask(authToken,
-                user, pageSize, lastStatus, new GetFeedHandler(observer));
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(getFeedTask);
+public class FeedService extends BaseService<FeedService.FeedResult, FeedService.FeedRequest> {
+    @Override
+    public void executeService(FeedRequest request, BaseObserver<FeedResult> observer) {
+        GetFeedTask getFeedTask = new GetFeedTask(
+                request.authToken,
+                request.user,
+                request.pageSize,
+                request.lastStatus,
+                new FeedServiceHandler(observer, "Failed to get feed: ", "Failed to get feed because of exception: ")
+        );
+        BackgroundTaskUtils.runTask(getFeedTask);
     }
 
-    private static class GetFeedHandler extends Handler {
-        private final GetFeedObserver observer;
+    public interface FeedObserver extends BaseObserver<FeedResult> {}
 
-        public GetFeedHandler(GetFeedObserver observer) {
-            super(Looper.getMainLooper());
-            this.observer = observer;
+    public static class FeedResult {
+        public final List<Status> statuses;
+        public final boolean hasMorePages;
+        public final Status lastStatus;
+
+        public FeedResult(List<Status> statuses, boolean hasMorePages, Status lastStatus) {
+            this.statuses = statuses;
+            this.hasMorePages = hasMorePages;
+            this.lastStatus = lastStatus;
+        }
+    }
+
+    public static class FeedRequest {
+        public final AuthToken authToken;
+        public final User user;
+        public final int pageSize;
+        public final Status lastStatus;
+
+        public FeedRequest(AuthToken authToken, User user, int pageSize, Status lastStatus) {
+            this.authToken = authToken;
+            this.user = user;
+            this.pageSize = pageSize;
+            this.lastStatus = lastStatus;
+        }
+    }
+
+    public class FeedServiceHandler extends BaseServiceHandler {
+        public FeedServiceHandler(BaseObserver<FeedResult> observer, String failureMessage, String exceptionMessage) {
+            super(observer, failureMessage, exceptionMessage);
         }
 
         @Override
-        public void handleMessage(@NonNull Message msg) {
-            boolean success = msg.getData().getBoolean(GetFeedTask.SUCCESS_KEY);
-            if (success) {
-                List<Status> statuses = (List<Status>) msg.getData().getSerializable(GetFeedTask.ITEMS_KEY);
-                boolean hasMorePages = msg.getData().getBoolean(GetFeedTask.MORE_PAGES_KEY);
-                assert statuses != null;
-                Status lastStatus = (statuses.size() > 0) ? statuses.get(statuses.size() - 1) : null;
-                observer.getFeedSucceeded(statuses, hasMorePages, lastStatus);
-            } else if (msg.getData().containsKey(GetFeedTask.MESSAGE_KEY)) {
-                String message = msg.getData().getString(GetFeedTask.MESSAGE_KEY);
-                observer.getFeedFailed("Failed to get feed: " + message);
-            } else if (msg.getData().containsKey(GetFeedTask.EXCEPTION_KEY)) {
-                Exception ex = (Exception) msg.getData().getSerializable(GetFeedTask.EXCEPTION_KEY);
-                assert ex != null;
-                observer.getFeedFailed("Failed to get feed because of exception: " + ex.getMessage());
-            }
+        protected void handleSuccess(Message msg) {
+            List<Status> statuses = (List<Status>) msg.getData().getSerializable(GetFeedTask.ITEMS_KEY);
+            boolean hasMorePages = msg.getData().getBoolean(GetFeedTask.MORE_PAGES_KEY);
+            assert statuses != null;
+            Status lastStatus = (statuses.size() > 0) ? statuses.get(statuses.size() - 1) : null;
+            observer.handleSuccess(new FeedResult(statuses, hasMorePages, lastStatus));
         }
     }
 }

@@ -13,7 +13,7 @@ import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class FeedPresenter implements UserService.GetUserObserver, FeedService.GetFeedObserver {
+public class FeedPresenter implements UserService.GetUserObserver, FeedService.FeedObserver {
 
     private static final int PAGE_SIZE = 10;
 
@@ -28,16 +28,16 @@ public class FeedPresenter implements UserService.GetUserObserver, FeedService.G
     }
 
     @Override
-    public void getFeedSucceeded(List<Status> statuses, boolean hasMorePages, Status lastStatus) {
-        this.lastStatus = lastStatus;
-        this.hasMorePages = hasMorePages;
+    public void handleSuccess(FeedService.FeedResult result) {
+        this.lastStatus = result.lastStatus;
+        this.hasMorePages = result.hasMorePages;
         this.isLoading = false;
         view.endingLoad();
-        view.addItems(statuses);
+        view.addItems(result.statuses);
     }
 
     @Override
-    public void getFeedFailed(String message) {
+    public void handleFailure(String message) {
         this.isLoading = false;
         view.endingLoad();
         view.showErrorMessage(message);
@@ -87,7 +87,7 @@ public class FeedPresenter implements UserService.GetUserObserver, FeedService.G
             view.startingLoad();
 
             var feedService = new FeedService();
-            feedService.getFeed(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastStatus, this);
+            feedService.executeService(new FeedService.FeedRequest(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastStatus), this);
         }
     }
 }
