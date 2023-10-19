@@ -76,7 +76,7 @@ public class FollowersPresenter implements UserService.GetUserObserver, FollowSe
 
     public void getUser(AuthToken authToken, String alias) {
         var userService = new UserService();
-        userService.getUser(authToken, alias, this);
+        userService.executeService(new UserService.GetUserRequest(authToken, alias), this);
         view.showInfoMessage("Getting user's profile...");
     }
 

@@ -1,10 +1,11 @@
 package edu.byu.cs.tweeter.client.presenter;
 
+import edu.byu.cs.tweeter.client.model.services.LoginService;
 import edu.byu.cs.tweeter.client.model.services.UserService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class LoginPresenter implements UserService.LoginObserver {
+public class LoginPresenter implements LoginService.LoginObserver {
 
 
     public interface View {
@@ -28,8 +29,8 @@ public class LoginPresenter implements UserService.LoginObserver {
 
             view.showInfoMessage("Logging In...");
 
-            var userService = new UserService();
-            userService.login(alias, password, this);
+            var loginService = new LoginService();
+            loginService.executeService(new LoginService.LoginRequest(alias, password), this);
         }
     }
 
@@ -58,7 +59,7 @@ public class LoginPresenter implements UserService.LoginObserver {
     }
 
     @Override
-    public void logingFailed(String message) {
+    public void loginFailed(String message) {
     view.showErrorMessage(message);
     }
 }

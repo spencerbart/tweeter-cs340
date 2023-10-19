@@ -1,11 +1,12 @@
 package edu.byu.cs.tweeter.client.presenter;
 
 import edu.byu.cs.tweeter.client.model.services.FollowService;
+import edu.byu.cs.tweeter.client.model.services.LogoutService;
 import edu.byu.cs.tweeter.client.model.services.PostService;
 import edu.byu.cs.tweeter.client.model.services.UserService;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class MainPresenter implements FollowService.UnfollowObserver, FollowService.FollowObserver, FollowService.GetFollowersCountObserver, FollowService.GetFollowingCountObserver, FollowService.IsFollowerObserver, UserService.LogoutObserver, PostService.PostObserver {
+public class MainPresenter implements FollowService.UnfollowObserver, FollowService.FollowObserver, FollowService.GetFollowersCountObserver, FollowService.GetFollowingCountObserver, FollowService.IsFollowerObserver, LogoutService.LogoutObserver, PostService.PostObserver {
     @Override
     public void unfollowSucceeded() {
         this.updateSelectedUserFollowingAndFollowers();
@@ -127,8 +128,8 @@ public class MainPresenter implements FollowService.UnfollowObserver, FollowServ
     }
 
     public void logout() {
-        var userService = new UserService();
-        userService.logout(this);
+        var logoutService = new LogoutService();
+        logoutService.executeService("logout", this);
     }
 
     public void postStatus(String post) {

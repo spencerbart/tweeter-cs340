@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import edu.byu.cs.tweeter.client.model.services.backgroundTask.BackgroundTask;
 
 public abstract class BaseService<O, R> {
-    protected abstract void executeService(R request, O observer);
+    public abstract void executeService(R request, O observer);
 
 //    public interface BaseObserver<T> {
 //        void handleSuccess(T result);
