@@ -48,7 +48,7 @@ public class RegisterPresenter implements RegisterService.RegisterObserver {
         view.showInfoMessage("Registering...");
 
         var registerService = new RegisterService();
-        registerService.register(firstName, lastName, alias, password, imageBytesBase64, this);
+        registerService.executeService(new RegisterService.RegisterRequest(firstName, lastName, alias, password, imageBytesBase64), this);
     }
 
 

@@ -16,49 +16,57 @@ import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class StoryService {
+public class StoryService extends BaseService<StoryService.GetStoryObserver, StoryService.GetStoryRequest> {
     public interface GetStoryObserver {
         void getStorySucceeded(List<Status> statuses, boolean hasMorePages, Status lastStatus);
 
         void getStoryFailed(String message);
     }
 
-    public void getStory(AuthToken authToken, User user, int pageSize, Status lastStatus, GetStoryObserver observer) {
-        GetStoryTask getStoryTask = new GetStoryTask(authToken,
-                user, pageSize, lastStatus, new GetStoryHandler(observer));
+    public void executeService(GetStoryRequest request, GetStoryObserver observer) {
+        GetStoryTask getStoryTask = new GetStoryTask(
+                request.authToken,
+                request.user,
+                request.pageSize,
+                request.lastStatus,
+                new GetStoryHandler(observer)
+        );
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getStoryTask);
     }
 
-    private static class GetStoryHandler extends Handler {
-        private final GetStoryObserver observer;
+    public static class GetStoryRequest {
+        public final AuthToken authToken;
+        public final User user;
+        public final int pageSize;
+        public final Status lastStatus;
 
+        public GetStoryRequest(AuthToken authToken, User user, int pageSize, Status lastStatus) {
+            this.authToken = authToken;
+            this.user = user;
+            this.pageSize = pageSize;
+            this.lastStatus = lastStatus;
+        }
+    }
+
+    public class GetStoryHandler extends BaseServiceHandler {
         public GetStoryHandler(GetStoryObserver observer) {
-            super(Looper.getMainLooper());
-            this.observer = observer;
+            super(observer, "Failed to get story: ", "Failed to get story because of exception: ");
         }
 
         @Override
-        public void handleMessage(@NonNull Message msg) {
-//            isLoading = false;
-//            removeLoadingFooter();
+        protected void handleSuccess(Message msg) {
+            List<Status> statuses = (List<Status>) msg.getData().getSerializable(GetStoryTask.ITEMS_KEY);
+            boolean hasMorePages = msg.getData().getBoolean(GetStoryTask.MORE_PAGES_KEY);
+            assert statuses != null;
+            Status lastStatus = (statuses.size() > 0) ? statuses.get(statuses.size() - 1) : null;
+            observer.getStorySucceeded(statuses, hasMorePages, lastStatus);
+        }
 
-            boolean success = msg.getData().getBoolean(GetStoryTask.SUCCESS_KEY);
-            if (success) {
-                List<Status> statuses = (List<Status>) msg.getData().getSerializable(GetStoryTask.ITEMS_KEY);
-                boolean hasMorePages = msg.getData().getBoolean(GetStoryTask.MORE_PAGES_KEY);
-
-                Status lastStatus = (statuses.size() > 0) ? statuses.get(statuses.size() - 1) : null;
-
-//                storyRecyclerViewAdapter.addItems(statuses);
-                observer.getStorySucceeded(statuses, hasMorePages, lastStatus);
-            } else if (msg.getData().containsKey(GetStoryTask.MESSAGE_KEY)) {
-                String message = msg.getData().getString(GetStoryTask.MESSAGE_KEY);
-                observer.getStoryFailed("Failed to get story: " + message);
-            } else if (msg.getData().containsKey(GetStoryTask.EXCEPTION_KEY)) {
-                Exception ex = (Exception) msg.getData().getSerializable(GetStoryTask.EXCEPTION_KEY);
-                observer.getStoryFailed("Failed to get story because of exception: " + ex.getMessage());
-            }
+        @Override
+        protected void handleFailure(String message) {
+            observer.getStoryFailed(message);
         }
     }
+
 }

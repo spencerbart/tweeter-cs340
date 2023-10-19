@@ -81,7 +81,7 @@ public class StoryPresenter implements UserService.GetUserObserver, StoryService
             view.startingLoad();
 
             var storyService = new StoryService();
-            storyService.getStory(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastStatus, this);
+            storyService.executeService(new StoryService.GetStoryRequest(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastStatus), this);
         }
     }
 }
