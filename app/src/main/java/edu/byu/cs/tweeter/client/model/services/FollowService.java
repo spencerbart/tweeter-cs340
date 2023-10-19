@@ -249,21 +249,15 @@ public class FollowService {
         public void handleMessage(@NonNull Message msg) {
             boolean success = msg.getData().getBoolean(FollowTask.SUCCESS_KEY);
             if (success) {
-//                updateSelectedUserFollowingAndFollowers();
-//                updateFollowButton(false);
                 observer.followSucceeded();
             } else if (msg.getData().containsKey(FollowTask.MESSAGE_KEY)) {
                 String message = msg.getData().getString(FollowTask.MESSAGE_KEY);
-//                Toast.makeText(MainActivity.this, "Failed to follow: " + message, Toast.LENGTH_LONG).show();
                 observer.followFailed("Failed to follow: " + message);
             } else if (msg.getData().containsKey(FollowTask.EXCEPTION_KEY)) {
                 Exception ex = (Exception) msg.getData().getSerializable(FollowTask.EXCEPTION_KEY);
-//                Toast.makeText(MainActivity.this, "Failed to follow because of exception: " + ex.getMessage(), Toast.LENGTH_LONG).show();
                 assert ex != null;
                 observer.followFailed("Failed to follow because of exception: " + ex.getMessage());
             }
-
-//            followButton.setEnabled(true);
         }
     }
 

@@ -134,6 +134,6 @@ public class MainPresenter implements FollowService.UnfollowObserver, FollowServ
     public void postStatus(String post) {
         view.showInfoMessage("Posting Status...");
         var postService = new PostService();
-        postService.postStatus(post, this);
+        postService.executeService(post, this);
     }
 }

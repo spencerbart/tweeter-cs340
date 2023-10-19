@@ -10,31 +10,22 @@ import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class FeedService extends BaseService<FeedService.FeedResult, FeedService.FeedRequest> {
+public class FeedService extends BaseService<FeedService.FeedObserver, FeedService.FeedRequest> {
     @Override
-    public void executeService(FeedRequest request, BaseObserver<FeedResult> observer) {
+    public void executeService(FeedRequest request, FeedObserver observer) {
         GetFeedTask getFeedTask = new GetFeedTask(
                 request.authToken,
                 request.user,
                 request.pageSize,
                 request.lastStatus,
-                new FeedServiceHandler(observer, "Failed to get feed: ", "Failed to get feed because of exception: ")
+                new FeedServiceHandler(observer)
         );
         BackgroundTaskUtils.runTask(getFeedTask);
     }
 
-    public interface FeedObserver extends BaseObserver<FeedResult> {}
-
-    public static class FeedResult {
-        public final List<Status> statuses;
-        public final boolean hasMorePages;
-        public final Status lastStatus;
-
-        public FeedResult(List<Status> statuses, boolean hasMorePages, Status lastStatus) {
-            this.statuses = statuses;
-            this.hasMorePages = hasMorePages;
-            this.lastStatus = lastStatus;
-        }
+    public interface FeedObserver {
+        void getFeedSucceeded(List<Status> statuses, boolean hasMorePages, Status lastStatus);
+        void getFeedFailed(String message);
     }
 
     public static class FeedRequest {
@@ -52,8 +43,8 @@ public class FeedService extends BaseService<FeedService.FeedResult, FeedService
     }
 
     public class FeedServiceHandler extends BaseServiceHandler {
-        public FeedServiceHandler(BaseObserver<FeedResult> observer, String failureMessage, String exceptionMessage) {
-            super(observer, failureMessage, exceptionMessage);
+        public FeedServiceHandler(FeedObserver observer) {
+            super(observer, "Failed to get feed: ", "Failed to get feed because of exception: ");
         }
 
         @Override
@@ -62,7 +53,12 @@ public class FeedService extends BaseService<FeedService.FeedResult, FeedService
             boolean hasMorePages = msg.getData().getBoolean(GetFeedTask.MORE_PAGES_KEY);
             assert statuses != null;
             Status lastStatus = (statuses.size() > 0) ? statuses.get(statuses.size() - 1) : null;
-            observer.handleSuccess(new FeedResult(statuses, hasMorePages, lastStatus));
+            observer.getFeedSucceeded(statuses, hasMorePages, lastStatus);
+        }
+
+        @Override
+        protected void handleFailure(String message) {
+            observer.getFeedFailed(message);
         }
     }
 }

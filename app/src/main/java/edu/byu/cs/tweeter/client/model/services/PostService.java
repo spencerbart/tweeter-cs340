@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.client.cache.Cache;
+import edu.byu.cs.tweeter.client.model.services.backgroundTask.BackgroundTaskUtils;
 import edu.byu.cs.tweeter.client.model.services.backgroundTask.FollowTask;
 import edu.byu.cs.tweeter.client.model.services.backgroundTask.GetFollowersCountTask;
 import edu.byu.cs.tweeter.client.model.services.backgroundTask.GetFollowingCountTask;
@@ -24,18 +25,26 @@ import edu.byu.cs.tweeter.client.model.services.backgroundTask.UnfollowTask;
 import edu.byu.cs.tweeter.client.view.main.MainActivity;
 import edu.byu.cs.tweeter.model.domain.Status;
 
-public class PostService {
+public class PostService extends BaseService<PostService.PostObserver, String> {
 
-    public void postStatus(String post, PostObserver observer) {
+    @Override
+    public void executeService(String request, PostObserver observer) {
         try {
-            Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), System.currentTimeMillis(), parseURLs(post), parseMentions(post));
-            PostStatusTask statusTask = new PostStatusTask(Cache.getInstance().getCurrUserAuthToken(),
-                    newStatus, new PostStatusHandler(observer));
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.execute(statusTask);
+            Status newStatus = new Status(request, Cache.getInstance().getCurrUser(), System.currentTimeMillis(), parseURLs(request), parseMentions(request));
+            PostStatusTask statusTask = new PostStatusTask(
+                    Cache.getInstance().getCurrUserAuthToken(),
+                    newStatus,
+                    new PostStatusHandler(observer)
+            );
+            BackgroundTaskUtils.runTask(statusTask);
         } catch (Exception ex) {
             observer.postFailed("Failed to post the status because of exception: " + ex.getMessage());
         }
+    }
+
+    public interface PostObserver {
+        void postSucceeded();
+        void postFailed(String message);
     }
 
     private List<String> parseURLs(String post) {
@@ -95,32 +104,19 @@ public class PostService {
         return containedMentions;
     }
 
-    public interface PostObserver {
-        void postSucceeded();
-        void postFailed(String message);
-    }
-
-    private static class PostStatusHandler extends Handler {
-        private  final PostObserver observer;
+    public class PostStatusHandler extends BaseServiceHandler {
 
         public PostStatusHandler(PostObserver observer) {
-            super(Looper.getMainLooper());
-            this.observer = observer;
+            super(observer, "Failed to post status: ", "Failed to post status because of exception: ");
+        }
+        @Override
+        protected void handleSuccess(Message msg) {
+            observer.postSucceeded();
         }
 
         @Override
-        public void handleMessage(@NonNull Message msg) {
-            boolean success = msg.getData().getBoolean(PostStatusTask.SUCCESS_KEY);
-            if (success) {
-                observer.postSucceeded();
-            } else if (msg.getData().containsKey(PostStatusTask.MESSAGE_KEY)) {
-                String message = msg.getData().getString(PostStatusTask.MESSAGE_KEY);
-                observer.postFailed("Failed to post status: " + message);
-            } else if (msg.getData().containsKey(PostStatusTask.EXCEPTION_KEY)) {
-                Exception ex = (Exception) msg.getData().getSerializable(PostStatusTask.EXCEPTION_KEY);
-                assert ex != null;
-                observer.postFailed("Failed to post status because of exception: " + ex.getMessage());
-            }
+        protected void handleFailure(String message) {
+            observer.postFailed(message);
         }
     }
 }

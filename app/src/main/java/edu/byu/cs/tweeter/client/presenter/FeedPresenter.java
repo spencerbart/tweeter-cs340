@@ -28,21 +28,20 @@ public class FeedPresenter implements UserService.GetUserObserver, FeedService.F
     }
 
     @Override
-    public void handleSuccess(FeedService.FeedResult result) {
-        this.lastStatus = result.lastStatus;
-        this.hasMorePages = result.hasMorePages;
+    public void getFeedSucceeded(List<Status> statuses, boolean hasMorePages, Status lastStatus) {
+        this.lastStatus = lastStatus;
+        this.hasMorePages = hasMorePages;
         this.isLoading = false;
         view.endingLoad();
-        view.addItems(result.statuses);
+        view.addItems(statuses);
     }
 
     @Override
-    public void handleFailure(String message) {
+    public void getFeedFailed(String message) {
         this.isLoading = false;
         view.endingLoad();
         view.showErrorMessage(message);
     }
-
     public interface View {
 
         void showInfoMessage(String message);
