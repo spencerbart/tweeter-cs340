@@ -5,7 +5,7 @@
 
 ## Sequence Diagram
 
-
+![sequence diagram](./part_c.jpg)
 
 # Questions
 
