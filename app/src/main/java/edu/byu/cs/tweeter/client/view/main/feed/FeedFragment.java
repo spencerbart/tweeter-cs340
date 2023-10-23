@@ -99,8 +99,18 @@ public class FeedFragment extends Fragment implements FeedPresenter.FeedView {
     }
 
     @Override
+    public void hideInfoMessage() {
+
+    }
+
+    @Override
     public void showErrorMessage(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void hideErrorMessage() {
+
     }
 
     @Override
@@ -153,7 +163,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.FeedView {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    presenter.getUser(Cache.getInstance().getCurrUserAuthToken(), userAlias.getText().toString());
+                    presenter.getUser(userAlias.getText().toString());
                 }
             });
         }
@@ -184,7 +194,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.FeedView {
 
                         String clickable = s.subSequence(start, end).toString();
 
-                        presenter.getUser(Cache.getInstance().getCurrUserAuthToken(), clickable);
+                        presenter.getUser(clickable);
                     }
 
                     @Override

@@ -2,36 +2,11 @@ package edu.byu.cs.tweeter.client.presenter;
 
 import java.util.Base64;
 
-import edu.byu.cs.tweeter.client.model.services.RegisterService;
-import edu.byu.cs.tweeter.model.domain.AuthToken;
-import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.client.model.services.newservices.UserService;
 
-public class RegisterPresenter implements RegisterService.RegisterObserver {
-    @Override
-    public void registerSucceeded(User user, AuthToken authToken) {
-        view.hideErrorMessage();
-        view.hideInfoMessage();
-        view.showInfoMessage("Hello, " + user.getName());
-        view.openMainView(user);
-    }
-
-    @Override
-    public void registerFailed(String message) {
-        view.showErrorMessage(message);
-    }
-
-    public interface View {
-        void showInfoMessage(String message);
-        void hideInfoMessage();
-        void showErrorMessage(String message);
-        void hideErrorMessage();
-
-        void openMainView(User user);
-    }
-
-    private final View view;
-
+public class RegisterPresenter extends AuthenticatePresenter {
     public RegisterPresenter(View view) {
+        super(view);
         this.view = view;
     }
     public void register(String firstName, String lastName, String alias, String password, byte[] imageBytes) {
@@ -42,8 +17,8 @@ public class RegisterPresenter implements RegisterService.RegisterObserver {
         view.hideErrorMessage();
         view.showInfoMessage("Registering...");
 
-        var registerService = new RegisterService();
-        registerService.executeService(new RegisterService.RegisterRequest(firstName, lastName, alias, password, imageBytesBase64), this);
+        var registerService = new UserService();
+        registerService.register(firstName, lastName, alias, password, imageBytesBase64, this);
     }
 
 
@@ -79,5 +54,15 @@ public class RegisterPresenter implements RegisterService.RegisterObserver {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void handleFailure(String message) {
+        view.showErrorMessage("Failed to register:" + message);
+    }
+
+    @Override
+    public void handleException(Exception exception) {
+        view.showErrorMessage("Failed to register because of exception: " + exception.getMessage());
     }
 }

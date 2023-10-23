@@ -1,36 +1,19 @@
 package edu.byu.cs.tweeter.client.presenter;
 
-import edu.byu.cs.tweeter.client.model.services.LoginService;
-import edu.byu.cs.tweeter.client.model.services.UserService;
-import edu.byu.cs.tweeter.model.domain.AuthToken;
-import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.client.model.services.newservices.UserService;
 
-public class LoginPresenter implements LoginService.LoginObserver {
-
-
-    public interface View {
-        void showInfoMessage(String message);
-        void hideInfoMessage();
-        void showErrorMessage(String message);
-        void hideErrorMessage();
-
-        void openMainView(User user);
-    }
-
-    private View view;
-
+public class LoginPresenter extends AuthenticatePresenter {
     public LoginPresenter(View view) {
-        this.view = view;
+        super(view);
     }
 
     public void login(String alias, String password) {
         if (validateLogin(alias, password)) {
             view.hideErrorMessage();
-
             view.showInfoMessage("Logging In...");
 
-            var loginService = new LoginService();
-            loginService.executeService(new LoginService.LoginRequest(alias, password), this);
+            var loginService = new UserService();
+            loginService.login(alias, password, this);
         }
     }
 
@@ -51,15 +34,12 @@ public class LoginPresenter implements LoginService.LoginObserver {
     }
 
     @Override
-    public void loginSucceeded(AuthToken authToken, User user) {
-        view.hideErrorMessage();
-        view.hideInfoMessage();
-        view.showInfoMessage("Hello, " + user.getName());
-        view.openMainView(user);
+    public void handleFailure(String message) {
+        view.showErrorMessage("Failed to login:" + message);
     }
 
     @Override
-    public void loginFailed(String message) {
-    view.showErrorMessage(message);
+    public void handleException(Exception exception) {
+        view.showErrorMessage("Failed to login because of exception: " + exception.getMessage());
     }
 }

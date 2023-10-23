@@ -1,13 +1,16 @@
 package edu.byu.cs.tweeter.client.presenter;
 
-import java.util.List;
-
-import edu.byu.cs.tweeter.client.model.services.FeedService;
-import edu.byu.cs.tweeter.client.model.services.backgroundTask.GetFeedTask;
+import edu.byu.cs.tweeter.client.model.services.newservices.StatusService;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class FeedPresenter extends PagedPresenter<Status, FeedService, GetFeedTask> {
+public class FeedPresenter extends PagedPresenter<Status> {
+    @Override
+    protected void getItems() {
+        StatusService service = new StatusService();
+        service.getFeed(user, PAGE_SIZE, lastItem, this);
+    }
+
     public interface FeedView extends PagedView<Status> {}
 
     public FeedPresenter(FeedView view, User user) {
@@ -15,8 +18,4 @@ public class FeedPresenter extends PagedPresenter<Status, FeedService, GetFeedTa
         this.errorMessage = "feed";
     }
 
-    @Override
-    public FeedService getService() {
-        return new FeedService();
-    }
 }

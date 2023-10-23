@@ -98,8 +98,18 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Fo
     }
 
     @Override
+    public void hideInfoMessage() {
+
+    }
+
+    @Override
     public void showErrorMessage(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void hideErrorMessage() {
+
     }
 
     @Override
@@ -148,7 +158,7 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Fo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    presenter.getUser(Cache.getInstance().getCurrUserAuthToken(), userAlias.getText().toString());
+                    presenter.getUser(userAlias.getText().toString());
                 }
             });
         }

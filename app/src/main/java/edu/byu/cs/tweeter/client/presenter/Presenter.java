@@ -5,7 +5,9 @@ import edu.byu.cs.tweeter.model.domain.User;
 public abstract class Presenter {
     public interface View {
         void showInfoMessage(String message);
+        void hideInfoMessage();
         void showErrorMessage(String message);
+        void hideErrorMessage();
 
         void openView(User user);
     }

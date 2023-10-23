@@ -2,15 +2,12 @@ package edu.byu.cs.tweeter.client.presenter;
 
 import java.util.List;
 
-import edu.byu.cs.tweeter.client.cache.Cache;
-import edu.byu.cs.tweeter.client.model.services.PagedService;
-import edu.byu.cs.tweeter.client.model.services.UserService;
+import edu.byu.cs.tweeter.client.model.services.backgroundTask.observer.GetUserObserver;
 import edu.byu.cs.tweeter.client.model.services.backgroundTask.observer.PagedObserver;
-import edu.byu.cs.tweeter.client.model.services.backgroundTask.observer.UserObserver;
-import edu.byu.cs.tweeter.model.domain.AuthToken;
+import edu.byu.cs.tweeter.client.model.services.newservices.UserService;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public abstract class PagedPresenter<T, S extends PagedService<T, A>, A extends Runnable> extends Presenter implements PagedObserver<T>, UserObserver { // T is going to be Status or User and S is going to be a Service
+public abstract class PagedPresenter<T> extends AuthenticatedPresenter implements PagedObserver<T>, GetUserObserver { // T is going to be Status or User and S is going to be a Service
     protected int PAGE_SIZE = 10;
     @Override
     public void handleSuccess(List<T> items, boolean hasMorePages, T lastItem) {
@@ -45,19 +42,18 @@ public abstract class PagedPresenter<T, S extends PagedService<T, A>, A extends 
     }
 
     protected PagedView<T> view;
-    protected User user;
     protected T lastItem;
     protected boolean hasMorePages;
     protected boolean isLoading = false;
 
     public PagedPresenter(PagedView<T> view, User user) {
-        super(view);
-        this.user = user;
+        super(view, user);
+        this.view = view;
     }
 
-    public void getUser(AuthToken authToken, String alias) {
+    public void getUser(String alias) {
         var userService = new UserService();
-        userService.getUser(authToken, alias, this);
+        userService.getUser(alias, this);
         view.showInfoMessage("Geting user's profile...");
     }
 
@@ -66,10 +62,11 @@ public abstract class PagedPresenter<T, S extends PagedService<T, A>, A extends 
             isLoading = true;
             view.startLoadingBottom();
 
-            var service = getService();
-            service.getItems(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastItem, this);
+            getItems();
         }
     }
+
+    protected abstract void getItems();
 
     public boolean getIsLoading() {
         return isLoading;
@@ -78,6 +75,4 @@ public abstract class PagedPresenter<T, S extends PagedService<T, A>, A extends 
     public boolean getHasMorePages() {
         return hasMorePages;
     }
-
-    public abstract S getService();
 }
