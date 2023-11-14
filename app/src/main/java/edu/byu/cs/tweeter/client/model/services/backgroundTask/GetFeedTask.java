@@ -29,6 +29,8 @@ public class GetFeedTask extends PagedStatusTask {
             if (response.isSuccess()) {
                 return new Pair<>(response.getStatuses(), response.getHasMorePages());
             } else {
+//                sendFailedMessage(response.getMessage());
+//                return new Pair<>(null, false);
                 throw new Exception(response.getMessage());
             }
         } catch (Exception e) {

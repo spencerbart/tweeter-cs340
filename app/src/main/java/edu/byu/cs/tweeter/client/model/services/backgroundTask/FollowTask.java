@@ -32,7 +32,8 @@ public class FollowTask extends AuthenticatedTask {
             if (response.isSuccess()) {
                 sendSuccessMessage();
             } else {
-                throw new Exception(response.getMessage());
+//                throw new Exception(response.getMessage());
+                sendFailedMessage(response.getMessage());
             }
         } catch (Exception ex) {
             Log.e("FollowTask", ex.getMessage(), ex);
