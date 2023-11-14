@@ -21,6 +21,14 @@ public abstract class AuthenticateTask extends BackgroundTask {
 
     protected final String password;
 
+    protected String getUsername() {
+        return userName;
+    }
+
+    protected String getPassword() {
+        return password;
+    }
+
     protected AuthenticateTask(String userName, String password, Handler messageHandler) {
         super(messageHandler);
         this.userName = userName;

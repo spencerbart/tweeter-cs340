@@ -6,7 +6,9 @@ import android.os.Message;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Objects;
 
+import edu.byu.cs.tweeter.client.model.network.ServerFacade;
 import edu.byu.cs.tweeter.util.FakeData;
 
 public abstract class BackgroundTask implements Runnable {
@@ -86,5 +88,11 @@ public abstract class BackgroundTask implements Runnable {
         Message msg = Message.obtain();
         msg.setData(msgBundle);
         messageHandler.sendMessage(msg);
+    }
+
+
+    private final ServerFacade serverFacade = getServerFacade();
+    public ServerFacade getServerFacade() {
+        return Objects.requireNonNullElseGet(serverFacade, ServerFacade::new);
     }
 }
