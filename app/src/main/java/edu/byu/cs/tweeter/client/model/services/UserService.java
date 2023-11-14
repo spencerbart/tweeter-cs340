@@ -31,5 +31,6 @@ public class UserService {
 
     public void logout(LogoutObserver observer) {
         LogoutTask task = new LogoutTask(Cache.getInstance().getCurrUserAuthToken(), new LogoutHandler(observer));
+        BackgroundTaskUtils.runTask(task);
     }
 }

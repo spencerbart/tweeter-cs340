@@ -7,11 +7,13 @@ import edu.byu.cs.tweeter.client.model.network.request.GetFeedRequest;
 import edu.byu.cs.tweeter.client.model.network.request.GetFollowersRequest;
 import edu.byu.cs.tweeter.client.model.network.request.GetFollowingRequest;
 import edu.byu.cs.tweeter.client.model.network.request.LoginRequest;
+import edu.byu.cs.tweeter.client.model.network.request.LogoutRequest;
 import edu.byu.cs.tweeter.client.model.network.response.FollowResponse;
 import edu.byu.cs.tweeter.client.model.network.response.GetFeedResponse;
 import edu.byu.cs.tweeter.client.model.network.response.GetFollowersResponse;
 import edu.byu.cs.tweeter.client.model.network.response.GetFollowingResponse;
 import edu.byu.cs.tweeter.client.model.network.response.LoginResponse;
+import edu.byu.cs.tweeter.client.model.network.response.LogoutResponse;
 
 public class ServerFacade {
 
@@ -57,6 +59,10 @@ public class ServerFacade {
 
     public FollowResponse follow(FollowRequest request, String urlPath) throws IOException, TweeterRemoteException {
         return clientCommunicator.doPost(urlPath, request, null, FollowResponse.class);
+    }
+
+    public LogoutResponse logout(LogoutRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, LogoutResponse.class);
     }
 
 }
