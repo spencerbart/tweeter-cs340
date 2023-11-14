@@ -9,6 +9,8 @@ import edu.byu.cs.tweeter.client.model.network.request.GetFollowersRequest;
 import edu.byu.cs.tweeter.client.model.network.request.GetFollowingCountRequest;
 import edu.byu.cs.tweeter.client.model.network.request.GetFollowingRequest;
 import edu.byu.cs.tweeter.client.model.network.request.GetStoryRequest;
+import edu.byu.cs.tweeter.client.model.network.request.GetUserRequest;
+import edu.byu.cs.tweeter.client.model.network.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.client.model.network.request.LoginRequest;
 import edu.byu.cs.tweeter.client.model.network.request.LogoutRequest;
 import edu.byu.cs.tweeter.client.model.network.request.PostStatusRequest;
@@ -20,6 +22,8 @@ import edu.byu.cs.tweeter.client.model.network.response.GetFollowersResponse;
 import edu.byu.cs.tweeter.client.model.network.response.GetFollowingCountResponse;
 import edu.byu.cs.tweeter.client.model.network.response.GetFollowingResponse;
 import edu.byu.cs.tweeter.client.model.network.response.GetStoryResponse;
+import edu.byu.cs.tweeter.client.model.network.response.GetUserResponse;
+import edu.byu.cs.tweeter.client.model.network.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.client.model.network.response.LoginResponse;
 import edu.byu.cs.tweeter.client.model.network.response.LogoutResponse;
 import edu.byu.cs.tweeter.client.model.network.response.PostStatusResponse;
@@ -34,33 +38,41 @@ public class ServerFacade {
 
     private final ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
 
-    /**
-     * Performs a login and if successful, returns the logged in user and an auth token.
-     *
-     * @param request contains all information needed to perform a login.
-     * @return the login response.
-     */
-    public LoginResponse login(LoginRequest request, String urlPath) throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, LoginResponse.class);
+    public FollowResponse follow(FollowRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, FollowResponse.class);
     }
 
-    /**
-     * Returns the users that the user specified in the request is following. Uses information in
-     * the request object to limit the number of followees returned and to return the next set of
-     * followees after any that were returned in a previous request.
-     *
-     * @param request contains information about the user whose followees are to be returned and any
-     *                other information required to satisfy the request.
-     * @return the followees.
-     */
-    public GetFollowingResponse getFollowing(GetFollowingRequest request, String urlPath)
-            throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, GetFollowingResponse.class);
+    public UnfollowResponse unfollow(UnfollowRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, UnfollowResponse.class);
     }
 
     public GetFollowersResponse getFollowers(GetFollowersRequest request, String urlPath)
             throws IOException, TweeterRemoteException {
         return clientCommunicator.doPost(urlPath, request, null, GetFollowersResponse.class);
+    }
+
+    public GetFollowersCountResponse getFollowersCount(GetFollowersCountRequest request, String urlPath)
+            throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, GetFollowersCountResponse.class);
+    }
+
+    public GetFollowingResponse getFollowing(GetFollowingRequest request, String urlPath)
+            throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, GetFollowingResponse.class);
+    }
+
+    public GetFollowingCountResponse getFollowingCount(GetFollowingCountRequest request, String urlPath)
+            throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, GetFollowingCountResponse.class);
+    }
+
+    public IsFollowerResponse isFollower(IsFollowerRequest request, String urlPath)
+            throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, IsFollowerResponse.class);
+    }
+
+    public PostStatusResponse postStatus(PostStatusRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, PostStatusResponse.class);
     }
 
     public GetFeedResponse getFeed(GetFeedRequest request, String urlPath) throws IOException, TweeterRemoteException {
@@ -71,30 +83,20 @@ public class ServerFacade {
         return clientCommunicator.doPost(urlPath, request, null, GetStoryResponse.class);
     }
 
-    public FollowResponse follow(FollowRequest request, String urlPath) throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, FollowResponse.class);
+    public LoginResponse login(LoginRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, LoginResponse.class);
     }
 
-    public UnfollowResponse unfollow(UnfollowRequest request, String urlPath) throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, UnfollowResponse.class);
-    }
+//    public RegisterResponse register(RegisterRequest request, String urlPath) throws IOException, TweeterRemoteException {
+//        return clientCommunicator.doPost(urlPath, request, null, RegisterResponse.class);
+//    }
 
     public LogoutResponse logout(LogoutRequest request, String urlPath) throws IOException, TweeterRemoteException {
         return clientCommunicator.doPost(urlPath, request, null, LogoutResponse.class);
     }
 
-    public GetFollowersCountResponse getFollowersCount(GetFollowersCountRequest request, String urlPath)
-            throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, GetFollowersCountResponse.class);
-    }
-
-    public GetFollowingCountResponse getFollowingCount(GetFollowingCountRequest request, String urlPath)
-            throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, GetFollowingCountResponse.class);
-    }
-
-    public PostStatusResponse postStatus(PostStatusRequest request, String urlPath) throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, PostStatusResponse.class);
+    public GetUserResponse getUser(GetUserRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, GetUserResponse.class);
     }
 
 }

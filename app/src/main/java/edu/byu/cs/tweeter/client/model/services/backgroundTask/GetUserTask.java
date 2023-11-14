@@ -3,6 +3,8 @@ package edu.byu.cs.tweeter.client.model.services.backgroundTask;
 import android.os.Bundle;
 import android.os.Handler;
 
+import edu.byu.cs.tweeter.client.model.network.request.GetUserRequest;
+import edu.byu.cs.tweeter.client.model.network.response.GetUserResponse;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -24,7 +26,18 @@ public class GetUserTask extends AuthenticatedTask {
 
     @Override
     protected void runTask() {
-        user = getUser();
+//        user = getUser();
+        try {
+            GetUserRequest request = new GetUserRequest(getAuthToken(), alias);
+            GetUserResponse response = getServerFacade().getUser(request, "/user");
+            if (response.isSuccess()) {
+                user = response.getUser();
+            } else {
+                throw new Exception(response.getMessage());
+            }
+        } catch (Exception ex) {
+            sendExceptionMessage(ex);
+        }
 
         // Call sendSuccessMessage if successful
         sendSuccessMessage();
