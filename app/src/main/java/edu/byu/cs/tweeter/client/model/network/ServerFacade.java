@@ -14,6 +14,7 @@ import edu.byu.cs.tweeter.client.model.network.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.client.model.network.request.LoginRequest;
 import edu.byu.cs.tweeter.client.model.network.request.LogoutRequest;
 import edu.byu.cs.tweeter.client.model.network.request.PostStatusRequest;
+import edu.byu.cs.tweeter.client.model.network.request.RegisterRequest;
 import edu.byu.cs.tweeter.client.model.network.request.UnfollowRequest;
 import edu.byu.cs.tweeter.client.model.network.response.FollowResponse;
 import edu.byu.cs.tweeter.client.model.network.response.GetFeedResponse;
@@ -27,6 +28,7 @@ import edu.byu.cs.tweeter.client.model.network.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.client.model.network.response.LoginResponse;
 import edu.byu.cs.tweeter.client.model.network.response.LogoutResponse;
 import edu.byu.cs.tweeter.client.model.network.response.PostStatusResponse;
+import edu.byu.cs.tweeter.client.model.network.response.RegisterResponse;
 import edu.byu.cs.tweeter.client.model.network.response.UnfollowResponse;
 
 public class ServerFacade {
@@ -87,9 +89,9 @@ public class ServerFacade {
         return clientCommunicator.doPost(urlPath, request, null, LoginResponse.class);
     }
 
-//    public RegisterResponse register(RegisterRequest request, String urlPath) throws IOException, TweeterRemoteException {
-//        return clientCommunicator.doPost(urlPath, request, null, RegisterResponse.class);
-//    }
+    public RegisterResponse register(RegisterRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, RegisterResponse.class);
+    }
 
     public LogoutResponse logout(LogoutRequest request, String urlPath) throws IOException, TweeterRemoteException {
         return clientCommunicator.doPost(urlPath, request, null, LogoutResponse.class);

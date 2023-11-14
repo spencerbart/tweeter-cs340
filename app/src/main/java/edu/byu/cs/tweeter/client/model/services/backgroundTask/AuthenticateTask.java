@@ -17,12 +17,12 @@ public abstract class AuthenticateTask extends BackgroundTask {
     private User authenticatedUser;
     private AuthToken authToken;
 
-    protected final String userName;
+    protected final String username;
 
     protected final String password;
 
     protected String getUsername() {
-        return userName;
+        return username;
     }
 
     protected String getPassword() {
@@ -31,7 +31,7 @@ public abstract class AuthenticateTask extends BackgroundTask {
 
     protected AuthenticateTask(String userName, String password, Handler messageHandler) {
         super(messageHandler);
-        this.userName = userName;
+        this.username = userName;
         this.password = password;
     }
 
