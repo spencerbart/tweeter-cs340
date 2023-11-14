@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import edu.byu.cs.tweeter.client.model.network.request.FollowRequest;
+import edu.byu.cs.tweeter.client.model.network.response.FollowResponse;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -24,6 +26,17 @@ public class FollowTask extends AuthenticatedTask {
 
     @Override
     protected void runTask() {
-        sendSuccessMessage();
+        try {
+            FollowRequest request = new FollowRequest(getAuthToken(), followee.getAlias());
+            FollowResponse response = getServerFacade().follow(request, "/follow");
+            if (response.isSuccess()) {
+                sendSuccessMessage();
+            } else {
+                throw new Exception(response.getMessage());
+            }
+        } catch (Exception ex) {
+            Log.e("FollowTask", ex.getMessage(), ex);
+            sendExceptionMessage(ex);
+        }
     }
 }

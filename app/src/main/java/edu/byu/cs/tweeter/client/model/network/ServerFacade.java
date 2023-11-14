@@ -2,10 +2,14 @@ package edu.byu.cs.tweeter.client.model.network;
 
 import java.io.IOException;
 
+import edu.byu.cs.tweeter.client.model.network.request.FollowRequest;
 import edu.byu.cs.tweeter.client.model.network.request.GetFeedRequest;
+import edu.byu.cs.tweeter.client.model.network.request.GetFollowersRequest;
 import edu.byu.cs.tweeter.client.model.network.request.GetFollowingRequest;
 import edu.byu.cs.tweeter.client.model.network.request.LoginRequest;
+import edu.byu.cs.tweeter.client.model.network.response.FollowResponse;
 import edu.byu.cs.tweeter.client.model.network.response.GetFeedResponse;
+import edu.byu.cs.tweeter.client.model.network.response.GetFollowersResponse;
 import edu.byu.cs.tweeter.client.model.network.response.GetFollowingResponse;
 import edu.byu.cs.tweeter.client.model.network.response.LoginResponse;
 
@@ -42,7 +46,17 @@ public class ServerFacade {
         return clientCommunicator.doPost(urlPath, request, null, GetFollowingResponse.class);
     }
 
+    public GetFollowersResponse getFollowers(GetFollowersRequest request, String urlPath)
+            throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, GetFollowersResponse.class);
+    }
+
     public GetFeedResponse getFeed(GetFeedRequest request, String urlPath) throws IOException, TweeterRemoteException {
         return clientCommunicator.doPost(urlPath, request, null, GetFeedResponse.class);
     }
+
+    public FollowResponse follow(FollowRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, FollowResponse.class);
+    }
+
 }
