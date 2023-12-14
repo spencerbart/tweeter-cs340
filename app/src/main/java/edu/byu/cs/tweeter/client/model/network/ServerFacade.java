@@ -36,7 +36,7 @@ public class ServerFacade {
     // TODO: Set this to the invoke URL of your API. Find it by going to your API in AWS, clicking
     //  on stages in the right-side menu, and clicking on the stage you deployed your API to.
     private static final String SERVER_URL = "https://4lfyijqjfjleofyyo3v7gn57xi0nykvv.lambda-url.us-west-2.on.aws";
-//    private static final String SERVER_URL = "http://0.0.0.0:9000";
+//    private static final String SERVER_URL = "https://loose-demonstration-numeric-encounter.trycloudflare.com";
 
     private final ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
 

@@ -10,7 +10,12 @@ import java.util.concurrent.Executors;
 public class BackgroundTaskUtils {
 
     public static void runTask(Runnable task) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(task);
+        try {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute(task);
+        } catch (Exception e) {
+            System.err.println("Error executing task: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

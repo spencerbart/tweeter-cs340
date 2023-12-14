@@ -25,6 +25,9 @@ public class MainPresenter extends AuthenticatedPresenter implements LogoutObser
         void setFollowingCount(int followingCount);
     }
     protected View view;
+    public MainPresenter() {
+        super(null, null);
+    }
     public MainPresenter(View view, User user) {
         super(view, user);
         this.view = view;
@@ -67,6 +70,7 @@ public class MainPresenter extends AuthenticatedPresenter implements LogoutObser
     }
     @Override
     public void postSucceeded() {
+        view.hideInfoMessage();
         view.showInfoMessage("Successfully Posted!");
     }
     @Override

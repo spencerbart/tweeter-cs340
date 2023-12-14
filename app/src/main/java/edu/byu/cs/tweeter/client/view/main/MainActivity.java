@@ -199,7 +199,9 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
 
     @Override
     public void showInfoMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+//        postingToast = Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        postingToast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        postingToast.show();
     }
 
     @Override
@@ -209,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
 
     @Override
     public void hideInfoMessage() {
-
+        postingToast.cancel();
     }
 
     @Override
